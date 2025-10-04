@@ -12,14 +12,14 @@
  
 目录结构说明
  
-[TRAIN_TOOLS]/
-├── __init__.py
-├── basic_steps.py      #一些不同程度打包好的基础步骤，从准备设备，数据集，到训练模型，按需导入需要的功能
-├── my_models.py        #储存常用的神经网络模型或灵活定义神经网络的功能
-├── templates_of_batch_copies.py    #多复本训练流程模板，复制粘贴使用
-├── templates_of_one_batch_simulations.py   #单复本训练流程模板，复制粘贴使用
-├── tools.py         # 自定义的方便函数
-└── README.md     # 项目说明文档（当前文件）
+TRAIN_TOOLS/
+├── init.py
+├── basic_steps.py # 一些不同程度打包好的基础步骤，从准备设备，数据集，到训练模型，按需导入需要的功能
+├── my_models.py # 储存常用的神经网络模型或灵活定义神经网络的功能
+├── templates_of_batch_copies.py # 多复本训练流程模板，复制粘贴使用
+├── templates_of_one_batch_simulations.py # 单复本训练流程模板，复制粘贴使用
+├── tools.py # 自定义的方便函数
+└── README.md # 项目说明文档（当前文件）
  
  
  
