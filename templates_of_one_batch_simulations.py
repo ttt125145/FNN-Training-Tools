@@ -13,7 +13,7 @@ epochs = 200    #训练步数
 # nl = 10,        #每层神经元
 # num_hidden_layers=2, #隐藏层数
 # batchsize = 40,     #输入数据分成小批次的大小
-# criterion = nn.MultiMarginLoss() #损失函数
+# criterion = nn.MultiMarginLoss() # 损失函数
 # Optimizer = optim.SGD   #优化器
 
 '''主流程'''
