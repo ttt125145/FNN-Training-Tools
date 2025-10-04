@@ -16,7 +16,7 @@ def SELECT_data(dataset,num_per_class=200):
         selected_indices.extend(np.random.choice(indices, num_per_class, replace=False)) 
     return Subset(dataset, selected_indices)
 
-#选取(神经元个数n，batchsize)参数组合的点。按range()语法传入二者选点元组，返回numpy数组(n点数，batchsize点数)
+#选取(神经元个数n，batchsize)参数组合的点。按range()语法传入二者选点元组，返回numpy数组 (n点数，batchsize点数)
 def select_pot(n_range=(10,101,10),batchsize_range=(40,2001,40)):
     n_pot = range(n_range[0],n_range[1],n_range[2])
     b_pot = range(batchsize_range[0],batchsize_range[1],batchsize_range[2])
