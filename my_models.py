@@ -10,7 +10,7 @@ def build_flexible_FNN(nl, num_hidden_layers=2, device='cpu'):
     构建具有任意隐藏层的全连接神经网络
     
     参数:
-    nl: int - 每个隐藏层的神经元数量
+    nl: int - 每个隐藏层的神经元数量.
     num_hidden_layers: int - 隐藏层的数量 (默认为2)
     device: str - 模型运行的设备 ('cpu' 或 'cuda')
     
