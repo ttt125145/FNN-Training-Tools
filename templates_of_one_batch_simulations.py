@@ -1,4 +1,4 @@
-import basic_steps as bs
+import packages.basic_steps as bs
 
 '''模板--复制粘贴使用'''
 '''模拟单批次，使用不同参数(如网络宽度,高度,batch_size),训练n个神经网络'''

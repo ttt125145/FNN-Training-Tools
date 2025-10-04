@@ -1,4 +1,4 @@
-import basic_steps as bs
+import packages.basic_steps as bs
 import torch.nn as nn
 import torch.optim as optim
 import os
