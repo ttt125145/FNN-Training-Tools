@@ -15,7 +15,7 @@ base_data_path = 'E:/new_project'#结果总路径
 
 epochs = 200    #训练步数
 copy_num = 5    #单次复本数
-xuhao = 0 #分批序号
+xuhao = 3 #分批序号
 
 
 
@@ -30,10 +30,9 @@ models_num =250  #单批训练模型数
 seed = 1+xuhao*models_num*copy_num
 
 nl_list = [10,20,40,80,160]
-bz_list = range(40,2001,40)
+bz_list = range(40,81,40)
 pot_arr = select_nlbz_pot(nl_list,bz_list)
 
-SELECT_data_seed(200)
 
 '''主流程'''
 def __main__():

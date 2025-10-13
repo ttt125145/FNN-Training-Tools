@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader,Subset
 import json,time,os
 import numpy as np
 
-from packages.tools import get_weight,get_bias,SELECT_data
+from packages.tools import get_weight,get_bias,SELECT_data,load_seed_data
 from packages.my_models import build_flexible_FNN
 
 data_path = ''
@@ -34,9 +34,9 @@ def prepare_minist(transform):
     train_dataset = datasets.MNIST('MNIST_data',train=True,download=True,transform=transform)
     test_dataset = datasets.MNIST('MNIST_data',train=False,download=True,transform=transform)
     #按需选取子集,需更改时替换新的选取函数
-    train_dataset = SELECT_data(train_dataset)
-    test_dataset = SELECT_data(test_dataset)
+    train_dataset,test_dataset = load_seed_data(transform)
     return train_dataset,test_dataset
+
 
 #4.根据batch size创建数据集加载器
 def build_loader_by_batchsize(train_dataset,test_dataset,batchsize=40):
