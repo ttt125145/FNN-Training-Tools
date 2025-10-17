@@ -1,7 +1,9 @@
+import sys,os
+sys.path.append(os.getcwd())
 import torch.nn as nn
 import torch
 import torch.optim as optim
-import os,time
+import time
 import numpy as np
 import packages.basic_steps as bs
 from packages.tools import select_nlbz_pot,SELECT_data_seed

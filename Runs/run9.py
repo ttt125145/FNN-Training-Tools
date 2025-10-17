@@ -1,7 +1,9 @@
+import sys,os
+sys.path.append(os.getcwd())
 import torch.nn as nn
 import torch
 import torch.optim as optim
-import os,time
+import time
 import numpy as np
 import packages.basic_steps as bs
 from packages.tools import select_nlbz_pot,SELECT_data_seed
@@ -18,8 +20,6 @@ copy_num = 8    #单次复本数
 xuhao = 9 #分批序号
 
 
-
-
 '''按需预定义'''
 # nl = 10,        #每层神经元
 # num_hidden_layers=2, #隐藏层数    
@@ -33,12 +33,14 @@ nl_list = [10,20,40,80,160]
 bz_list = range(40,2001,40)
 pot_arr = select_nlbz_pot(nl_list,bz_list)
 
-SELECT_data_seed(200)
 
 '''主流程'''
 def __main__():
     device= bs.get_device()
+    ddt = 0 #记录上个复本用时，开局为0
+    readable_finish_time = '未知'#根据上个复本结束时预测的完成用时
     for c in range(copy_num):
+        t1 = time.time()
         #创建复本结果路径
         data_path = f'{base_data_path}/copy{xuhao*copy_num+c}'
         if not os.path.isdir(data_path):
@@ -60,8 +62,16 @@ def __main__():
                 criterion=nn.MultiMarginLoss(),
                 Optimizer=optim.SGD)   
             dt=bs.one_simulation(device,model,optimizer,criterion,train_loader,test_loader,epochs,seed,data_path)
-            print(f'复本{xuhao*copy_num+c}({(i*pot_arr.shape[1]+j)/models_num}),model(nl{nl},bz{bz}),用时{dt/60:.2f}分')
+            print(f'分组区间[{xuhao*copy_num},{(xuhao+1)*copy_num})，复本{xuhao*copy_num+c}({(i*pot_arr.shape[1]+j+1)}/{models_num}),model(nl{nl},bz{bz}),用时{dt/60:.2f}分\
+            上个复本用时：{ddt/3600:2f}小时,预计完成时间:{readable_finish_time}')
             seed += 1
+        t2 = time.time()
+        ddt = t2 - t1
+        tf = t2 + ddt*(copy_num-1-c)#预测结束时间戳
+        dtf = time.localtime(tf)
+        readable_finish_time = time.strftime('%m-%d %H:%M:%S',dtf)
+        print(f'[{xuhao*copy_num},{(xuhao+1)*copy_num}) 复本{xuhao*copy_num+c}({c+1}/{copy_num}),用时：{ddt/3600:.2f}小时,\
+        预计完成时间：{readable_finish_time}')
 
 if __name__ == '__main__':
     __main__()    
