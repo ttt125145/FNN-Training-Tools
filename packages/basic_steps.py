@@ -1,9 +1,11 @@
+import sys,os
+sys.path.append(os.getcwd())
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torchvision import datasets,transforms
 from torch.utils.data import DataLoader,Subset
-import json,time,os
+import json,time
 import numpy as np
 
 from packages.tools import get_weight,get_bias,SELECT_data,load_seed_data
@@ -201,3 +203,4 @@ def build_result_tree(data_path):
                 print(f'Failed building {check_path} due to Unknowing error.')
         else:
             print(f'结果目录存在：{check_path}')
+            
