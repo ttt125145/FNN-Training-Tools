@@ -1,3 +1,5 @@
+import sys,os
+sys.path.append(os.getcwd()) #项目根目录添加到系统路径，方便子目录脚本导入packages中的库
 import packages.basic_steps as bs
 
 '''模板--复制粘贴使用'''
@@ -23,6 +25,7 @@ def __main__():
         device,model,optimizer,criterion,train_loader,test_loader = bs.full_prepare(   )#此括号传入循环的参数，以匹配项目要求
         bs.one_simulation(device,model,optimizer,criterion,train_loader,test_loader,epochs,seed)
         seed += 1
+        print()
         
 if __name__ == '__main__':
     __main__()
