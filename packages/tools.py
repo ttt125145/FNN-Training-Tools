@@ -9,7 +9,7 @@ import numpy as np
 #选取每类num_per_class的子集。传入数据集，每类数。返回子集，选取索引列表。
 def SELECT_data(dataset,num_per_class=200):
     class_indices = {i: [] for i in range(10)}
-    for idx, (_, label) in enumerate(dataset):
+    for idx, (_, label) in enumerate(dataset): 
         class_indices[label].append(idx)
     selected_indices = []
     for class_id, indices in class_indices.items():
