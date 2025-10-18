@@ -18,4 +18,4 @@ from torchvision import datasets,transforms
 SELECT_data_seed(200)
 
 dicts = np.load('data_seed.npz')
-print(dicts['train_seed'].shape)
+print(dicts['train_seed'].shape)   
