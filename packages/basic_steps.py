@@ -11,7 +11,7 @@ import numpy as np
 from packages.tools import get_weight,get_bias,SELECT_data,load_seed_data
 from packages.my_models import build_flexible_FNN
 
-data_path = ''
+data_path = ' '
 seed = 1
 epochs = 200
 
