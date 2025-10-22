@@ -3,3 +3,4 @@ __pycache__/
 *.pth
 copy[0-9]*/
 tempCodeRunnerFile.py
+*.png
