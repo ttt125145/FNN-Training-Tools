@@ -376,9 +376,9 @@ def one_simulation(
             seed,
             data_path,
         )
-        print(
-            f"epoch{epoch+1}/{epochs}: test_accuracy:{test_accuracy:.4f} 用时{dt:.2f}秒"
-        )
+        # print(
+        #     f"epoch{epoch+1}/{epochs}: test_accuracy:{test_accuracy:.4f} 用时{dt:.2f}秒"
+        # )
         # 添加新epoch的概括信息
         summaries["train_losses"].append(train_loss)
         summaries["train_accuracies"].append(train_accuracy)
@@ -454,7 +454,7 @@ def build_result_tree(data_path):
     返回:
     None
     """
-    
+
     data_list = [
         "best_models",
         "dinamic_weights",
@@ -467,8 +467,7 @@ def build_result_tree(data_path):
         if not os.path.isdir(check_path):
             try:
                 os.mkdir(check_path)
-                print(f"建立结果目录：{check_path}")
+                # print(f"建立结果目录：{check_path}")
             except:
-                print(f"Failed building {check_path} due to Unknowing error.")
-        else:
-            print(f"结果目录存在：{check_path}")
+                raise Exception(f"Failed building {check_path} due to Unknowing error.")
+
