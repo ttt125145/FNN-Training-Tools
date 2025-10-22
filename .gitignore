@@ -1,0 +1,6 @@
+__pycache__/
+*.npz
+*.pth
+copy[0-9]*/
+tempCodeRunnerFile.py
+*.png
