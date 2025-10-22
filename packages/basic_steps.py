@@ -42,7 +42,7 @@ def prepare_minist(transform):
 
 #4.根据batch size创建数据集加载器
 def build_loader_by_batchsize(train_dataset,test_dataset,batchsize=40):
-    train_loader = DataLoader(train_dataset,batch_size=batchsize,shuffle=True)#打包训练集，每批64，随机抽取
+    train_loader = DataLoader(train_dataset,batch_size=batchsize,shuffle=True,drop_last=True)#打包训练集，每批64，随机抽取
     test_loader = DataLoader(test_dataset,batch_size=batchsize,shuffle=False)#打包测试集，每批64，不随机
     return train_loader,test_loader
 
@@ -78,8 +78,9 @@ def train_one_epoch(device,model,optimizer,criterion,train_loader):
     running_loss = 0.0 #实时loss
     total_train = 0 #实时总训练数
     correct_train = 0  #实时正确训练数
+    layer_output_allbatch = [] #储存批次输出的列表
     model.train()
-    for inputs,labels in train_loader:#历遍训练集
+    for inputs,labels in train_loader:#历遍每个batch
         inputs,labels = inputs.to(device),labels.to(device)#获取图，标签，传入GPU
         optimizer.zero_grad()#清空历史梯度
         outputs,layer_output = model(inputs)#前向传播
@@ -87,11 +88,12 @@ def train_one_epoch(device,model,optimizer,criterion,train_loader):
         loss.backward()#计算梯度
         optimizer.step()#反向传播
         #记录数据
+        layer_output_allbatch.append(layer_output)
         running_loss += loss.item()
         _,predicted = torch.max(outputs,1)
         total_train += labels.size(0)
         correct_train += (predicted==labels).sum().item()
-    return running_loss,total_train,correct_train,layer_output
+    return running_loss,total_train,correct_train,layer_output_allbatch
 
 '''一个epoch的测试。'''
 '''依次传入: 设备，模型，训练集；''' 
@@ -120,7 +122,7 @@ def run_one_epoch(device,model,optimizer,criterion,train_loader,test_loader,seed
     t1 = time.time()
     best_accuracy = 0.0 #记录最佳验证集准确率
     #训练
-    running_loss,total_train,correct_train,layer_output = train_one_epoch(device,model,optimizer,criterion,train_loader)   
+    running_loss,total_train,correct_train,layer_output_allbatch = train_one_epoch(device,model,optimizer,criterion,train_loader)   
     #计算训练时每轮准确率，损失值
     train_accuracy = correct_train/total_train
     train_loss = running_loss/len(train_loader)
@@ -132,7 +134,7 @@ def run_one_epoch(device,model,optimizer,criterion,train_loader,test_loader,seed
         best_accuracy = test_accuracy
         torch.save(model.state_dict(),os.path.join(data_path,'best_models',f'best_model(seed{seed}).pth'))
     t2 = time.time()   
-    return train_loss,train_accuracy,test_accuracy,layer_output,t2-t1
+    return train_loss,train_accuracy,test_accuracy,layer_output_allbatch,t2-t1
 
 '''打包一次完整模拟，按需打包或分开。'''
 '''依次传入：设备，模型，优化器，损失函数，训练集,测试集,epochs,seed,data_path''' 
@@ -146,14 +148,14 @@ def one_simulation(device,model,optimizer,criterion,train_loader,test_loader,epo
     layer_outputs = []#储存所有epoch中间输出    
     torch.manual_seed(seed)
     for epoch in range(epochs):
-        train_loss,train_accuracy,test_accuracy,layer_output,dt = run_one_epoch(device,model,optimizer,criterion,train_loader,test_loader,seed,data_path)
+        train_loss,train_accuracy,test_accuracy,layer_output_allbatch,dt = run_one_epoch(device,model,optimizer,criterion,train_loader,test_loader,seed,data_path)
         print(f'epoch{epoch+1}/{epochs}: test_accuracy:{test_accuracy:.4f} 用时{dt:.2f}秒')
         #添加新epoch的概括信息
         summaries['train_losses'].append(train_loss)
         summaries['train_accuracies'].append(train_accuracy)
         summaries['test_accuracies'].append(test_accuracy)
         #添加新epoch的每层输出
-        layer_outputs.append(layer_output.cpu().detach().numpy())
+        layer_outputs.append(layer_output_allbatch.cpu().detach().numpy())
         #添加新epoch的权重/偏置矩阵
         weight,bias = get_weight(model),get_bias(model)
         weights.append(weight),biases.append(bias)
@@ -180,6 +182,7 @@ def one_simulation(device,model,optimizer,criterion,train_loader,test_loader,epo
     #储存每轮中间输出--形状(epo，fc,batch_size,cell数)
     layers_epo_array = np.stack(layer_outputs)
     np.save(os.path.join(data_path,'dinamic_layers_out',f'layers_out(seed{seed})_shape{layers_epo_array.shape}.npy'),layers_epo_array)
+    print(f'实际形状：{layers_epo_array.shape[-2:]}')
     
     t2 = time.time()
     return t2-t1

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 import numpy as np
+import gc
 
 
 base_data_path = 'E:/new_project'
@@ -11,9 +12,11 @@ for c in range(80):
     print(c)
     for seed in range(start_seed,start_seed+250):
         data_path = f'{base_data_path}/copy{c}'
-        summaries = np.load(f'{base_data_path}/copy{c}/loss_accuracies_during_epoch/loss_accuracies(seed{seed}).npz')
+        summaries = np.load(f'{base_data_path}/copy{c}/loss_accuracies_during_epoch/loss_accuracies(seed{seed}).npz',mmap_mode='r')
         last_accuracy = summaries['test_accuracies'][-1]
         accuracies_arr[c,seed-start_seed] = last_accuracy
+        del summaries
+        gc.collect()
     start_seed += 250
 average_accu = np.mean(accuracies_arr,axis=0)
 average_nlbz_arr = average_accu.reshape(5,50)

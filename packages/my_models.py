@@ -43,6 +43,7 @@ def build_flexible_FNN(nl, num_hidden_layers=2, device='cpu'):
                 x = layer(x)
                 if i < len(self.hidden_layers) - 1:  # 除了最后一层隐藏层
                     x = self.activation(x)
+                    print(f'隐藏层{i+1}，形状{x.shape}')
                 hidden_outputs.append(x)    
             # 输出层（无激活函数）
             output = self.output_layer(x)            
