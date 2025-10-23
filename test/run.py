@@ -33,6 +33,7 @@ def run_single_batch(xuhao_batch, progress_bar_queue):
     device = torch.device(
         "cuda" if torch.cuda.is_available() else "cpu"
     )  # 获取设备，每个进程会独立获取
+    print(f"Using device: {device} for batch {xuhao_batch}")
     batch_total_duration = 0  # 记录当前 xuhao_batch 批次的实际总用时
 
     # 计算当前批次的起始种子
@@ -119,9 +120,9 @@ def update_progress_bars():
 
 """必需设置"""
 # data_seed = "./data_seed.npy" # 这个在 SELECT_data_seed 中已经处理
-base_data_path = "./"  # 结果总路径
+base_data_path = "E:/test1"  # 结果总路径
 
-epochs = 250  # 训练步数
+epochs = 1  # 训练步数
 copy_num = 8  # 单次复本数
 # xuhao = 0  # 这个将作为函数的参数传入
 

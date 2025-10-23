@@ -153,6 +153,40 @@ def full_prepare(
     return device, model, optimizer, criterion, train_loader, test_loader
 
 
+# 全包干,除了第一步,避免重复启动设备,多复本训练使用,开头多传入一个 设备
+def almost_prepare(
+    device,
+    nl=10,
+    num_hidden_layers=2,
+    batchsize=40,
+    criterion=nn.MultiMarginLoss(),
+    Optimizer=optim.SGD,
+):
+    """
+    准备训练所需的组件，适用于多复本训练
+
+    参数:
+    device: torch.device - 当前使用的设备
+    nl: int - 每个隐藏层的神经元数量
+    num_hidden_layers: int - 隐藏层的数量
+    batchsize: int - 每个批次的样本数量
+    criterion: torch.nn.Module - 损失函数
+    Optimizer: torch.optim.Optimizer - 优化器类
+
+    返回:
+    device: torch.device - 当前使用的设备
+    model: nn.Module - 构建的神经网络模型
+    optimizer: torch.optim.Optimizer - 优化器实例
+    train_loader: torch.utils.data.DataLoader - 训练集加载器
+    test_loader: torch.utils.data.DataLoader - 测试集加载器
+    """
+
+    train_loader, test_loader = preprocess_loader(batchsize)
+    model = build_flexible_FNN(nl, num_hidden_layers, device)
+    optimizer = Optimizer(model.parameters(), lr=0.01)
+    return device, model, optimizer, criterion, train_loader, test_loader
+
+
 """ 一个epoch的训练。"""
 """依次传入: 设备，模型，优化器，损失函数，训练集；"""
 """传出数据记录:本次loss,实时总训练数,实时正确训练数"""
@@ -305,15 +339,24 @@ def one_simulation(
                 data_path,
             )
         )
-        print(
-            f"epoch{epoch+1}/{epochs}: test_accuracy:{test_accuracy:.4f} 用时{dt:.2f}秒"
-        )
+        # print(
+        #     f"epoch{epoch+1}/{epochs}: test_accuracy:{test_accuracy:.4f} 用时{dt:.2f}秒"
+        # )
         # 添加新epoch的概括信息
         summaries["train_losses"].append(train_loss)
         summaries["train_accuracies"].append(train_accuracy)
         summaries["test_accuracies"].append(test_accuracy)
         # 添加新epoch的每层输出
-        layer_outputs.append(layer_output_allbatch.cpu().detach().numpy())
+        if train_loader.batch_size != 2000:
+
+            layer_output_allbatch = [
+                tensor.cpu().detach().numpy() for tensor in layer_output_allbatch[:-1]
+            ]
+        else:
+            layer_output_allbatch = [
+                tensor.cpu().detach().numpy() for tensor in layer_output_allbatch
+            ]
+        layer_outputs.append(layer_output_allbatch)
         # 添加新epoch的权重/偏置矩阵
         weight, bias = get_weight(model), get_bias(model)
         weights.append(weight), biases.append(bias)

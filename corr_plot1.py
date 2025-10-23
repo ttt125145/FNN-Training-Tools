@@ -32,7 +32,9 @@ for i, n in enumerate(ns):
     for j, bz in enumerate(bzs):
         if (i, j) in data_dict:
             subplot_data = data_dict[(i, j)]
-            sns.kdeplot(data=subplot_data, ax=ax, label=f"bz={bz}", alpha=0.7)
+            sns.kdeplot(
+                data=subplot_data, ax=ax, label=f"bz={bz}", alpha=0.7, bw_adjust=0.01
+            )
 
     ax.set_title(f"Fixed n={n} (All Batch Sizes)")
     ax.set_xlabel("Value")
